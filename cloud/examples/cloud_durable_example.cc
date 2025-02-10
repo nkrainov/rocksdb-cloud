@@ -48,7 +48,7 @@ int main() {
   kBucketSuffix.append(user);
 
   // "rockset." is the default bucket prefix
-  const std::string bucketPrefix = "rockset.";
+  const std::string bucketPrefix = "";
   cloud_fs_options.src_bucket.SetBucketName(kBucketSuffix, bucketPrefix);
   cloud_fs_options.dest_bucket.SetBucketName(kBucketSuffix, bucketPrefix);
 
@@ -57,7 +57,7 @@ int main() {
 
   // Create a new AWS cloud env Status
   CloudFileSystem* cfs;
-  Status s = CloudFileSystem::NewAwsFileSystem(
+  Status s = CloudFileSystemEnv::NewAwsFileSystem(
       FileSystem::Default(), kBucketSuffix, kDBPath, kRegion, kBucketSuffix,
       kDBPath, kRegion, cloud_fs_options, nullptr, &cfs);
   if (!s.ok()) {
