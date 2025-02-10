@@ -98,6 +98,12 @@ using S3ClientFactory = std::function<std::shared_ptr<Aws::S3::S3Client>(
     const std::shared_ptr<Aws::Auth::AWSCredentialsProvider>&,
     const Aws::Client::ClientConfiguration&)>;
 
+class AwsOptions {
+ public:
+  // Override the http endpoint used to talk to a service.
+  std::string endpoint_override;
+};
+
 // Defines parameters required to connect to Kafka
 class KafkaLogOptions {
  public:
@@ -211,6 +217,8 @@ class CloudFileSystemOptions {
 
   // Access credentials
   AwsCloudAccessCredentials credentials;
+
+  AwsOptions aws_options;
 
   // If present, s3_client_factory will be used to create S3Client instances
   S3ClientFactory s3_client_factory;

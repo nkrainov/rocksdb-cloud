@@ -466,6 +466,7 @@ Status S3StorageProvider::PrepareOptions(const ConfigOptions& options) {
       return Status::InvalidArgument("Two different regions not supported");
     }
   }
+  Aws::InitAPI(Aws::SDKOptions());
   Aws::Client::ClientConfiguration config;
   Status status = AwsCloudOptions::GetClientConfiguration(
       cfs, cloud_opts.src_bucket.GetRegion(), &config);

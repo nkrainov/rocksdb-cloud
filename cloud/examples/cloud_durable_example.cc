@@ -25,6 +25,7 @@ static const bool disableWAL = false;
 int main() {
   // cloud environment config options here
   CloudFileSystemOptions cloud_fs_options;
+  cloud_fs_options.aws_options.endpoint_override = "127.0.0.1:9000";
 
   // Store a reference to a cloud file system. A new cloud env object should be
   // associated with every new cloud-db.
