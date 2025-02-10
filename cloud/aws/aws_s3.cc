@@ -50,6 +50,7 @@
 #include "port/port.h"
 #include "rocksdb/cloud/cloud_file_system.h"
 #include "rocksdb/cloud/cloud_storage_provider.h"
+#include "rocksdb/cloud/cloud_storage_provider_impl.h"
 #include "rocksdb/convenience.h"
 #include "rocksdb/options.h"
 #include "util/stderr_logger.h"
@@ -120,7 +121,7 @@ class AwsS3ClientWrapper {
       client_ = std::make_shared<Aws::S3::S3Client>(
           creds, config,
           Aws::Client::AWSAuthV4Signer::PayloadSigningPolicy::Never,
-          true /* useVirtualAddressing */);
+          false /* useVirtualAddressing */);
     } else {
       client_ = std::make_shared<Aws::S3::S3Client>(config);
     }
@@ -470,6 +471,7 @@ Status S3StorageProvider::PrepareOptions(const ConfigOptions& options) {
   Aws::Client::ClientConfiguration config;
   Status status = AwsCloudOptions::GetClientConfiguration(
       cfs, cloud_opts.src_bucket.GetRegion(), &config);
+  config.scheme = Aws::Http::Scheme::HTTP;
   if (status.ok()) {
     std::shared_ptr<Aws::Auth::AWSCredentialsProvider> creds;
     status = cloud_opts.credentials.GetCredentialsProvider(&creds);
