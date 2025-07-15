@@ -62,7 +62,7 @@ DBCloudImpl::~DBCloudImpl() {}
 Status DBCloud::Open(const Options& options, const std::string& dbname,
                      const std::string& persistent_cache_path,
                      const uint64_t persistent_cache_size_gb, DBCloud** dbptr,
-                     bool read_only) {
+                     bool read_only, bool open_as_secondary) {
   ColumnFamilyOptions cf_options(options);
   std::vector<ColumnFamilyDescriptor> column_families;
   column_families.push_back(
@@ -87,7 +87,7 @@ Status DBCloud::Open(const Options& opt, const std::string& local_dbname,
                      const std::string& persistent_cache_path,
                      const uint64_t persistent_cache_size_gb,
                      std::vector<ColumnFamilyHandle*>* handles, DBCloud** dbptr,
-                     bool read_only) {
+                     bool read_only, bool open_as_secondary) {
   Status st;
   Options options = opt;
 
@@ -194,11 +194,13 @@ Status DBCloud::Open(const Options& opt, const std::string& local_dbname,
 
   DB* db = nullptr;
   std::string dbid;
-  if (read_only) {
-    st = DB::OpenForReadOnly(options, local_dbname, column_families, handles,
-                             &db);
+  if (open_as_secondary) {
+      st = DB::OpenAsSecondary(options, local_dbname, "/tmp/secondary_log/", column_families, handles, &db);
+  } else if (read_only) {
+      st = DB::OpenForReadOnly(options, local_dbname, column_families, handles,
+                               &db);
   } else {
-    st = DB::Open(options, local_dbname, column_families, handles, &db);
+      st = DB::Open(options, local_dbname, column_families, handles, &db);
   }
 
   if (new_db && st.ok() && cfs->HasDestBucket() &&
